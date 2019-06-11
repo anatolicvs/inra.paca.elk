@@ -1,0 +1,11 @@
+{
+  "name": "inra-paca-elk",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node js/app.js"
+  },
+  "dependencies": {
+    "jsonld": "*"
+  }
+}
