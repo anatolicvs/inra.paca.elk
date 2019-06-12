@@ -9,18 +9,18 @@ err_report() {
 trap 'err_report $LINENO' ERR
 
 # Convert single document
-jsonld import loc.nt > loc.json
-jsonld frame -f frame.json loc.json > loc-framed.json
-jsonld compact -c context.json loc-framed.json > loc-compact.json
+# jsonld import loc.nt > loc.json
+# jsonld frame -f frame.json loc.json > loc-framed.json
+# jsonld compact -c context.json loc-framed.json > loc-compact.json
 
 # Use single document
 cat loc-compact.json | jq '.label'
 cat loc-compact.json | jq '.contribution[0].agent.label'
 
 # Convert 100 documents
-jsonld import loc-100.nt > loc-100.json
-jsonld frame -f frame.json loc-100.json > loc-100-framed.json
-jsonld compact -c context.json loc-100-framed.json > loc-100-compact.json
+# jsonld import loc-100.nt > loc-100.json
+# jsonld frame -f frame.json loc-100.json > loc-100-framed.json
+# jsonld compact -c context.json loc-100-framed.json > loc-100-compact.json
 
 # Create bulk index format
 FILTER='.["@graph"][] | "\({index:{_index:"loc",_type:"work",_id:(.id/"/")|last}})\n\({"@context":"http://localhost:3000/context.json"}+.)"'

@@ -1,25 +1,36 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta charset="UTF-8">
-<title>Search</title>
-<script src="js/jquery-3.3.1.min.js"></script>
-<style>
-	.row { display: flex; }
-	.col { flex: 50%; margin: 5px; }
-	#sample { white-space: pre-wrap; }
-</style>
-<script type="application/json" class="js-hypothesis-config">
+  <meta charset="UTF-8">
+  <title>Search</title>
+  <script src="js/jquery-3.3.1.min.js"></script>
+  <style>
+    .row {
+      display: flex;
+    }
+
+    .col {
+      flex: 50%;
+      margin: 5px;
+    }
+
+    #sample {
+      white-space: pre-wrap;
+    }
+  </style>
+  <script type="application/json" class="js-hypothesis-config">
 	{ "openSidebar": true }
 </script>
-<script src="js/hypothesis.js" async></script>
-<link rel="canonical" href="https://hbz.github.io/swib18-workshop/search.html"/>
+  <script src="js/hypothesis.js" async></script>
+  <link rel="canonical" href="https://hbz.github.io/swib18-workshop/search.html" />
 </head>
+
 <body>
-	 <div class='row'>
-		<div class='col'>
-			<h3 style='margin-top:0px'>Document structure:</h3>
-			<div ><code><pre id='sample'>
+  <div class='row'>
+    <div class='col'>
+      <h3 style='margin-top:0px'>Document structure:</h3>
+      <div><code><pre id='sample'>
 {
   "@context": "http://localhost:3000/context.json",
   "id": "http://id.loc.gov/resources/works/c000000026",
@@ -189,44 +200,46 @@
   },
   "label": "Report of the trial of George Ryan : before the Superior Court at Charlestown, N.H., in the county of Cheshire, May term 1811, for highway robbery."
 }</pre></code></div>
-		</div>
-		<div class='col'>
-			<input id='search' type='text' style='width: 99%' placeholder='Search query... (e.g. label:letters, wildcards with *)' autofocus/>
-			<div id='result'></div>
-		</div>
-	</div>
+    </div>
+    <div class='col'>
+      <input id='search' type='text' style='width: 99%'
+        placeholder='Search query... (e.g. label:letters, wildcards with *)' autofocus />
+      <div id='result'></div>
+    </div>
+  </div>
 
-	<script>
-		$.ajax({
-			url: 'http://localhost:9200/loc/work/c000000026/_source',
-			success: function(result) {
-				console.log(JSON.stringify(result));
-				$("#sample").html(JSON.stringify(result, null, 2));
-			},
-			error: function(jqXHR, textStatus, errorThrown) {
-				console.log(textStatus, ': ', errorThrown);
-			}
-		});
-		$('#search').keyup(
-				function() {
-					var query = encodeURIComponent($('#search').val());
-					var url = `http://localhost:9200/loc/work/_search?size=100&q=${query}`;
-					$.ajax({
-						url: url,
-						success: function(result) {
-							console.log(JSON.stringify(result));
-							$("#result").html(`<br/>Hits: ${result.hits.total} <hr/>`);
-							var hits = result.hits.hits;
-							for (let hit of hits) {
-								var link = `<a href='http://localhost:9200/loc/work/${hit._id}/_source'>${hit._source.label}</a>`;
-								$("#result").append(link + '<hr/>');
-							}
-						},
-						error: function(jqXHR, textStatus, errorThrown) {
-							console.log(textStatus, ': ', errorThrown, ': ', url);
-						}
-					});
-				});
-	</script>
+  <script>
+    $.ajax({
+      url: 'http://172.20.10.10:9200/loc/work/c000000026/_source',
+      success: function (result) {
+        console.log(JSON.stringify(result));
+        $("#sample").html(JSON.stringify(result, null, 2));
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        console.log(textStatus, ': ', errorThrown);
+      }
+    });
+    $('#search').keyup(
+      function () {
+        var query = encodeURIComponent($('#search').val());
+        var url = `http://172.20.10.10:9200/loc/work/_search?size=100&q=${query}`;
+        $.ajax({
+          url: url,
+          success: function (result) {
+            console.log(JSON.stringify(result));
+            $("#result").html(`<br/>Hits: ${result.hits.total} <hr/>`);
+            var hits = result.hits.hits;
+            for (let hit of hits) {
+              var link = `<a href='http://172.20.10.10:9200/loc/work/${hit._id}/_source'>${hit._source.label}</a>`;
+              $("#result").append(link + '<hr/>');
+            }
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+            console.log(textStatus, ': ', errorThrown, ': ', url);
+          }
+        });
+      });
+  </script>
 </body>
+
 </html>

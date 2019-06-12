@@ -56,9 +56,11 @@ const server = http.createServer((req, res) => {
 
 const hostname = '127.0.0.1';
 const port = 3000;
+
+/*
 server.listen(port, hostname, () => {
   console.log(`Serving context at http://${hostname}:${port}/\n`);
-});
+}); */
 
 // ======================
 // Functions called above
@@ -67,7 +69,7 @@ server.listen(port, hostname, () => {
 async function loadTriples() { return await readFile('data/loc.nt'); }
 
 async function toJsonLd(input) {
-  const output = await jsonld.fromRDF(input.toString(), {format: 'application/n-quads'});
+  const output = await jsonld.fromRDF(input.toString(), { format: 'application/n-quads' });
   await writeFile('data/loc.json', JSON.stringify(output, null, 2));
   return output;
 }
@@ -84,7 +86,7 @@ async function frame(input) {
 
 async function compact(input) {
   const context = await readFile('data/context.json');
-  const compact = await jsonld.compact(input, JSON.parse(context), {'compactArrays': true});
+  const compact = await jsonld.compact(input, JSON.parse(context), { 'compactArrays': true });
   await writeFile('data/loc-compact.json', JSON.stringify(compact, null, 2));
   return compact;
 }
@@ -94,19 +96,21 @@ async function compact(input) {
 // ===============================
 
 async function bulk(input) {
-  await deleteFile('data/bulk.ndjson');
-  const context = await readFile('data/context.json');
-  const writer = fs.createWriteStream('data/bulk.ndjson', { flags: 'a' })
+
+  console.log(input);
+  await deleteFile('/home/aozkan/works/inra.paca.elk/data/bulk.ndjson');
+  const context = await readFile('/home/aozkan/works/inra.paca.elk/data/context.json');
+  const writer = fs.createWriteStream('/home/aozkan/works/inra.paca.elk/data/bulk.ndjson', { flags: 'a' })
   const docs = input["@graph"];
   await writeDocs(docs, context, writer);
   return docs[docs.length == 1 ? 0 : 1];
 }
 
 async function writeDocs(docs, context, writer) {
-  for(i in docs) {
-    const compact = await jsonld.compact(docs[i], JSON.parse(context), {'compactArrays': true});
+  for (i in docs) {
+    const compact = await jsonld.compact(docs[i], JSON.parse(context), { 'compactArrays': true });
     compact['@context'] = `http://${hostname}:${port}/context.json`;
-    const meta = {index: {_index: 'loc', _type: 'work', _id: compact.id.split('/').pop()}};
+    const meta = { index: { _index: 'loc', _type: 'work', _id: compact.id.split('/').pop() } };
     writer.write(JSON.stringify(meta) + '\n');
     writer.write(JSON.stringify(compact) + '\n');
   }
